@@ -1,0 +1,429 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="logo">StudyHive</div>
+
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="courses.html">📚 Courses</a>
+                <a href="notes.html">📝 Notes</a>
+                <a href="quiz.html" class="active">🧠 Quizzes</a>
+                <a href="progress.html">📊 Progress</a>
+                <a href="profile.html">👤 Profile</a>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <h1>Quiz Center</h1>
+                    <p>Test your knowledge and track your score.</p>
+                </div>
+
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <span id="userName">Student</span>
+                </div>
+
+            </header>
+
+
+            <!-- Quiz Card -->
+
+            <section class="quiz-container">
+
+                <div class="quiz-header">
+
+                    <span id="questionNumber">
+                        Question 1 of 5
+                    </span>
+
+                    <span id="scoreDisplay">
+                        Score: 0
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        id="quizProgress"
+                        class="progress-fill"
+                    ></div>
+
+                </div>
+
+
+                <div class="question-area">
+
+                    <h2 id="question">
+                        Loading question...
+                    </h2>
+
+                    <div id="options"></div>
+
+                </div>
+
+
+                <button
+                    id="nextButton"
+                    class="next-btn"
+                    onclick="nextQuestion()"
+                >
+                    Next Question
+                </button>
+
+            </section>
+
+
+            <!-- Result -->
+
+            <section
+                id="resultBox"
+                class="quiz-result"
+                style="display:none;"
+            >
+
+                <div class="result-icon">🎉</div>
+
+                <h2>Quiz Completed!</h2>
+
+                <p id="finalScore"></p>
+
+                <button onclick="restartQuiz()">
+                    Try Again
+                </button>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // Check login
+
+        const userData =
+            localStorage.getItem("studyhiveUser");
+
+        if (!userData) {
+
+            window.location.href = "login.html";
+
+        } else {
+
+            const user = JSON.parse(userData);
+
+            document.getElementById("userName").innerText =
+                user.name;
+
+            document.getElementById("userAvatar").innerText =
+                user.name.charAt(0).toUpperCase();
+        }
+
+
+        // Quiz Questions
+
+        const questions = [
+
+            {
+                question: "What does HTML stand for?",
+
+                options: [
+                    "Hyper Text Markup Language",
+                    "High Text Machine Language",
+                    "Hyperlink Text Management Language",
+                    "Home Tool Markup Language"
+                ],
+
+                answer: 0
+            },
+
+            {
+                question: "Which language is mainly used for styling web pages?",
+
+                options: [
+                    "Python",
+                    "CSS",
+                    "Java",
+                    "SQL"
+                ],
+
+                answer: 1
+            },
+
+            {
+                question: "Which language is used to make web pages interactive?",
+
+                options: [
+                    "HTML",
+                    "CSS",
+                    "JavaScript",
+                    "SQL"
+                ],
+
+                answer: 2
+            },
+
+            {
+                question: "Which symbol is used for comments in Python?",
+
+                options: [
+                    "//",
+                    "/* */",
+                    "#",
+                    "<!-- -->"
+                ],
+
+                answer: 2
+            },
+
+            {
+                question: "Which database is used by StudyHive currently?",
+
+                options: [
+                    "MongoDB",
+                    "MySQL",
+                    "SQLite",
+                    "Oracle"
+                ],
+
+                answer: 2
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+
+        // Load question
+
+        function loadQuestion() {
+
+            answered = false;
+
+            const question =
+                questions[currentQuestion];
+
+            document.getElementById("question").innerText =
+                question.question;
+
+            document.getElementById("questionNumber").innerText =
+                "Question " +
+                (currentQuestion + 1) +
+                " of " +
+                questions.length;
+
+            document.getElementById("scoreDisplay").innerText =
+                "Score: " + score;
+
+            document.getElementById("quizProgress").style.width =
+                ((currentQuestion + 1) / questions.length * 100) + "%";
+
+
+            const optionsContainer =
+                document.getElementById("options");
+
+            optionsContainer.innerHTML = "";
+
+
+            question.options.forEach(function(option, index) {
+
+                const button =
+                    document.createElement("button");
+
+                button.className = "quiz-option";
+
+                button.innerText = option;
+
+                button.onclick = function() {
+
+                    selectAnswer(index, button);
+
+                };
+
+                optionsContainer.appendChild(button);
+
+            });
+
+
+            document.getElementById("nextButton").innerText =
+                currentQuestion === questions.length - 1
+                    ? "Finish Quiz"
+                    : "Next Question";
+        }
+
+
+        // Select answer
+
+        function selectAnswer(index, button) {
+
+            if (answered) return;
+
+            answered = true;
+
+            const correctAnswer =
+                questions[currentQuestion].answer;
+
+            const options =
+                document.querySelectorAll(".quiz-option");
+
+
+            options.forEach(function(option, i) {
+
+                option.disabled = true;
+
+                if (i === correctAnswer) {
+
+                    option.classList.add("correct");
+
+                }
+
+            });
+
+
+            if (index === correctAnswer) {
+
+                score++;
+
+                button.classList.add("correct");
+
+            } else {
+
+                button.classList.add("wrong");
+
+            }
+
+
+            document.getElementById("scoreDisplay").innerText =
+                "Score: " + score;
+        }
+
+
+        // Next question
+
+        function nextQuestion() {
+
+            if (!answered) {
+
+                alert("Please select an answer first.");
+
+                return;
+            }
+
+
+            if (currentQuestion < questions.length - 1) {
+
+                currentQuestion++;
+
+                loadQuestion();
+
+            } else {
+
+                showResult();
+
+            }
+
+        }
+
+
+        // Result
+
+        function showResult() {
+
+            document.querySelector(".quiz-container")
+                .style.display = "none";
+
+            document.getElementById("resultBox")
+                .style.display = "block";
+
+            document.getElementById("finalScore").innerText =
+                "You scored " +
+                score +
+                " out of " +
+                questions.length +
+                ".";
+
+
+            // Save quiz result
+
+            localStorage.setItem(
+                "studyhiveQuizScore",
+                score
+            );
+
+            localStorage.setItem(
+                "studyhiveQuizTotal",
+                questions.length
+            );
+        }
+
+
+        // Restart
+
+        function restartQuiz() {
+
+            currentQuestion = 0;
+
+            score = 0;
+
+            document.querySelector(".quiz-container")
+                .style.display = "block";
+
+            document.getElementById("resultBox")
+                .style.display = "none";
+
+            loadQuestion();
+        }
+
+
+        // Logout
+
+        function logout() {
+
+            localStorage.removeItem("studyhiveUser");
+
+            window.location.href = "login.html";
+        }
+
+
+        // Start quiz
+
+        loadQuestion();
+
+    </script>
+
+</body>
+</html>
+

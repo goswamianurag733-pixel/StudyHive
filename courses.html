@@ -1,0 +1,583 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Course - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">StudyHive</div>
+
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="courses.html" class="active">📚 Courses</a>
+                <a href="notes.html">📝 Notes</a>
+                <a href="quiz.html">🧠 Quizzes</a>
+                <a href="progress.html">📊 Progress</a>
+                <a href="profile.html">👤 Profile</a>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <h1 id="courseTitle">Course</h1>
+                    <p id="courseSubtitle">
+                        Start your learning journey.
+                    </p>
+                </div>
+
+                <div class="user-info">
+
+                    <div class="avatar" id="userAvatar">
+                        A
+                    </div>
+
+                    <span id="userName">
+                        Student
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- Course Hero -->
+
+            <section class="course-learning-header">
+
+                <div class="course-learning-icon" id="courseIcon">
+                    📚
+                </div>
+
+                <div>
+
+                    <span class="course-tag" id="courseTag">
+                        Course
+                    </span>
+
+                    <h2 id="courseHeading">
+                        Course
+                    </h2>
+
+                    <p id="courseDescription">
+                        Learn important concepts step by step.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Progress -->
+
+            <section class="course-progress-box">
+
+                <div class="course-progress-title">
+
+                    <strong>Course Progress</strong>
+
+                    <span id="courseProgressText">
+                        0%
+                    </span>
+
+                </div>
+
+                <div class="large-progress-bar">
+
+                    <div
+                        id="courseProgressBar"
+                        class="large-progress-fill"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Topics -->
+
+            <section class="course-topics">
+
+                <h2>Course Topics</h2>
+
+                <div id="topicsContainer"></div>
+
+            </section>
+
+
+            <!-- Completion -->
+
+            <section class="course-completion">
+
+                <h2>Complete Course</h2>
+
+                <p id="completionMessage">
+                    Complete all topics to finish this course.
+                </p>
+
+                <button
+                    id="completeButton"
+                    onclick="completeCourse()"
+                >
+                    ✓ Mark as Completed
+                </button>
+
+            </section>
+
+
+            <a
+                href="courses.html"
+                class="back-courses"
+            >
+                ← Back to Courses
+            </a>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // Check login
+
+        const userData =
+            localStorage.getItem("studyhiveUser");
+
+
+        if (!userData) {
+
+            window.location.href = "login.html";
+
+        } else {
+
+            const user = JSON.parse(userData);
+
+            document.getElementById("userName").innerText =
+                user.name;
+
+            document.getElementById("userAvatar").innerText =
+                user.name.charAt(0).toUpperCase();
+
+        }
+
+
+        // Course Data
+
+        const courseData = {
+
+            "Python Programming": {
+
+                icon: "💻",
+
+                tag: "Programming",
+
+                description:
+                    "Learn Python programming from basics to advanced concepts.",
+
+                topics: [
+                    "Python Basics",
+                    "Variables and Data Types",
+                    "Conditional Statements",
+                    "Loops",
+                    "Functions",
+                    "Lists and Dictionaries"
+                ]
+
+            },
+
+
+            "Web Development": {
+
+                icon: "🌐",
+
+                tag: "Web Development",
+
+                description:
+                    "Learn HTML, CSS and JavaScript to build modern websites.",
+
+                topics: [
+                    "HTML Basics",
+                    "CSS Fundamentals",
+                    "Responsive Design",
+                    "JavaScript Basics",
+                    "DOM Manipulation",
+                    "Web Projects"
+                ]
+
+            },
+
+
+            "Database Management": {
+
+                icon: "🗄️",
+
+                tag: "Database",
+
+                description:
+                    "Understand databases, SQL queries and data management.",
+
+                topics: [
+                    "Database Fundamentals",
+                    "SQL Basics",
+                    "SELECT Queries",
+                    "INSERT, UPDATE and DELETE",
+                    "Joins",
+                    "Database Design"
+                ]
+
+            },
+
+
+            "Cyber Security Basics": {
+
+                icon: "🔐",
+
+                tag: "Cyber Security",
+
+                description:
+                    "Learn the fundamentals of cyber security and online safety.",
+
+                topics: [
+                    "Cyber Security Fundamentals",
+                    "Common Cyber Threats",
+                    "Passwords and Authentication",
+                    "Network Security",
+                    "Web Security Basics",
+                    "Cyber Safety"
+                ]
+
+            },
+
+
+            "AI Fundamentals": {
+
+                icon: "🤖",
+
+                tag: "Artificial Intelligence",
+
+                description:
+                    "Understand the fundamental concepts of Artificial Intelligence.",
+
+                topics: [
+                    "Introduction to AI",
+                    "Machine Learning Basics",
+                    "Supervised Learning",
+                    "Unsupervised Learning",
+                    "Neural Networks",
+                    "AI Applications"
+                ]
+
+            },
+
+
+            "Data Science": {
+
+                icon: "📊",
+
+                tag: "Data Science",
+
+                description:
+                    "Learn data analysis and important data science concepts.",
+
+                topics: [
+                    "Introduction to Data Science",
+                    "Python for Data Science",
+                    "Data Cleaning",
+                    "Data Visualization",
+                    "Statistics Basics",
+                    "Data Analysis"
+                ]
+
+            }
+
+        };
+
+
+        // Get selected course
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+        const courseName =
+            params.get("course") || "Python Programming";
+
+
+        const course =
+            courseData[courseName] ||
+            courseData["Python Programming"];
+
+
+        // Course information
+
+        document.title =
+            courseName + " - StudyHive";
+
+        document.getElementById("courseTitle").innerText =
+            courseName;
+
+        document.getElementById("courseSubtitle").innerText =
+            "Learn and improve your skills.";
+
+        document.getElementById("courseIcon").innerText =
+            course.icon;
+
+        document.getElementById("courseTag").innerText =
+            course.tag;
+
+        document.getElementById("courseHeading").innerText =
+            courseName;
+
+        document.getElementById("courseDescription").innerText =
+            course.description;
+
+
+        // Course storage key
+
+        const storageKey =
+            "studyhiveCourse_" +
+            courseName;
+
+
+        // Get progress
+
+        let completedTopics =
+            JSON.parse(
+                localStorage.getItem(storageKey)
+            ) || [];
+
+
+        // Display topics
+
+        function displayTopics() {
+
+            const container =
+                document.getElementById("topicsContainer");
+
+            container.innerHTML = "";
+
+
+            course.topics.forEach(function(topic, index) {
+
+                const topicBox =
+                    document.createElement("div");
+
+                topicBox.className =
+                    "course-topic";
+
+
+                const checkbox =
+                    document.createElement("input");
+
+                checkbox.type = "checkbox";
+
+                checkbox.checked =
+                    completedTopics.includes(index);
+
+
+                checkbox.onchange = function() {
+
+                    toggleTopic(index);
+
+                };
+
+
+                const label =
+                    document.createElement("span");
+
+                label.innerText =
+                    (index + 1) +
+                    ". " +
+                    topic;
+
+
+                if (checkbox.checked) {
+
+                    label.classList.add("topic-completed");
+
+                }
+
+
+                topicBox.appendChild(checkbox);
+
+                topicBox.appendChild(label);
+
+                container.appendChild(topicBox);
+
+            });
+
+
+            updateProgress();
+
+        }
+
+
+        // Toggle topic
+
+        function toggleTopic(index) {
+
+            if (completedTopics.includes(index)) {
+
+                completedTopics =
+                    completedTopics.filter(
+                        function(item) {
+                            return item !== index;
+                        }
+                    );
+
+            } else {
+
+                completedTopics.push(index);
+
+            }
+
+
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(completedTopics)
+            );
+
+
+            displayTopics();
+
+        }
+
+
+        // Update progress
+
+        function updateProgress() {
+
+            const total =
+                course.topics.length;
+
+            const completed =
+                completedTopics.length;
+
+
+            const percentage =
+                Math.round(
+                    (completed / total) * 100
+                );
+
+
+            document.getElementById(
+                "courseProgressText"
+            ).innerText =
+                percentage + "%";
+
+
+            document.getElementById(
+                "courseProgressBar"
+            ).style.width =
+                percentage + "%";
+
+
+            const completeButton =
+                document.getElementById(
+                    "completeButton"
+                );
+
+
+            if (percentage === 100) {
+
+                completeButton.innerText =
+                    "✓ Course Completed";
+
+                completeButton.classList.add(
+                    "course-completed"
+                );
+
+                document.getElementById(
+                    "completionMessage"
+                ).innerText =
+                    "Congratulations! You have completed this course.";
+
+            } else {
+
+                completeButton.innerText =
+                    "✓ Mark as Completed";
+
+                completeButton.classList.remove(
+                    "course-completed"
+                );
+
+                document.getElementById(
+                    "completionMessage"
+                ).innerText =
+                    "Complete all topics to finish this course.";
+
+            }
+
+        }
+
+
+        // Complete course
+
+        function completeCourse() {
+
+            completedTopics = [];
+
+            for (
+                let i = 0;
+                i < course.topics.length;
+                i++
+            ) {
+
+                completedTopics.push(i);
+
+            }
+
+
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(completedTopics)
+            );
+
+
+            displayTopics();
+
+        }
+
+
+        // Logout
+
+        function logout() {
+
+            localStorage.removeItem("studyhiveUser");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        // Load
+
+        displayTopics();
+
+    </script>
+
+</body>
+</html>

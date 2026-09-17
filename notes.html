@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notes - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="logo">StudyHive</div>
+
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="courses.html">📚 Courses</a>
+                <a href="notes.html" class="active">📝 Notes</a>
+                <a href="#">🧠 Quizzes</a>
+                <a href="progress.html">📊 Progress</a>
+                <a href="profile.html">👤 Profile</a>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <h1>My Notes</h1>
+                    <p>Create, search and manage your study notes.</p>
+                </div>
+
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <span id="userName">Student</span>
+                </div>
+
+            </header>
+
+
+            <!-- Create Note -->
+
+            <section class="note-editor">
+
+                <h2>Create New Note</h2>
+
+                <input
+                    type="text"
+                    id="noteTitle"
+                    placeholder="Enter note title"
+                >
+
+                <textarea
+                    id="noteContent"
+                    placeholder="Write your note here..."
+                ></textarea>
+
+                <button onclick="saveNote()">
+                    + Save Note
+                </button>
+
+            </section>
+
+
+            <!-- Search -->
+
+            <div class="note-search">
+
+                <input
+                    type="text"
+                    id="noteSearch"
+                    placeholder="Search your notes..."
+                    oninput="displayNotes()"
+                >
+
+            </div>
+
+
+            <!-- Notes -->
+
+            <section>
+
+                <h2 class="notes-heading">Saved Notes</h2>
+
+                <div id="notesContainer" class="notes-grid"></div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // Check login
+
+        const userData =
+            localStorage.getItem("studyhiveUser");
+
+        if (!userData) {
+
+            window.location.href = "login.html";
+
+        } else {
+
+            const user = JSON.parse(userData);
+
+            document.getElementById("userName").innerText =
+                user.name;
+
+            document.getElementById("userAvatar").innerText =
+                user.name.charAt(0).toUpperCase();
+        }
+
+
+        // Get notes
+
+        function getNotes() {
+
+            return JSON.parse(
+                localStorage.getItem("studyhiveNotes")
+            ) || [];
+
+        }
+
+
+        // Save note
+
+        function saveNote() {
+
+            const title =
+                document.getElementById("noteTitle").value.trim();
+
+            const content =
+                document.getElementById("noteContent").value.trim();
+
+            if (!title || !content) {
+
+                alert("Please enter both title and note content.");
+
+                return;
+            }
+
+            const notes = getNotes();
+
+            notes.unshift({
+
+                id: Date.now(),
+
+                title: title,
+
+                content: content
+
+            });
+
+            localStorage.setItem(
+                "studyhiveNotes",
+                JSON.stringify(notes)
+            );
+
+            document.getElementById("noteTitle").value = "";
+
+            document.getElementById("noteContent").value = "";
+
+            displayNotes();
+        }
+
+
+        // Display notes
+
+        function displayNotes() {
+
+            const container =
+                document.getElementById("notesContainer");
+
+            const search =
+                document.getElementById("noteSearch")
+                .value
+                .toLowerCase();
+
+            const notes = getNotes();
+
+            container.innerHTML = "";
+
+            const filteredNotes = notes.filter(function(note) {
+
+                return note.title
+                    .toLowerCase()
+                    .includes(search)
+                    ||
+                    note.content
+                    .toLowerCase()
+                    .includes(search);
+
+            });
+
+
+            if (filteredNotes.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty-notes">
+                        <div>📝</div>
+                        <h3>No notes found</h3>
+                        <p>Create your first study note above.</p>
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            filteredNotes.forEach(function(note) {
+
+                const card =
+                    document.createElement("div");
+
+                card.className = "note-card";
+
+                card.innerHTML = `
+                    <h3>${escapeHTML(note.title)}</h3>
+
+                    <p>${escapeHTML(note.content)}</p>
+
+                    <button
+                        onclick="deleteNote(${note.id})"
+                        class="delete-note"
+                    >
+                        Delete
+                    </button>
+                `;
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+
+        // Delete note
+
+        function deleteNote(id) {
+
+            const notes =
+                getNotes().filter(function(note) {
+
+                    return note.id !== id;
+
+                });
+
+            localStorage.setItem(
+                "studyhiveNotes",
+                JSON.stringify(notes)
+            );
+
+            displayNotes();
+        }
+
+
+        // Prevent HTML injection
+
+        function escapeHTML(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.innerText = text;
+
+            return div.innerHTML;
+        }
+
+
+        // Logout
+
+        function logout() {
+
+            localStorage.removeItem("studyhiveUser");
+
+            window.location.href = "login.html";
+        }
+
+
+        displayNotes();
+
+    </script>
+
+</body>
+</html>

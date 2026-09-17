@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <div class="dashboard-page">
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                StudyHive
+            </div>
+
+
+            <nav>
+
+                <a
+                    href="dashboard.html"
+                    class="active"
+                >
+                    🏠 Dashboard
+                </a>
+
+                <a href="courses.html">
+                    📚 Courses
+                </a>
+
+                <a href="notes.html">
+                    📝 Notes
+                </a>
+
+                <a href="quiz.html">
+                    🧠 Quizzes
+                </a>
+
+                <a href="progress.html">
+                    📊 Progress
+                </a>
+
+                <a href="groups.html">
+                    👥 Study Groups
+                </a>
+
+                <a href="scheduler.html">
+                    📅 Smart Scheduler
+                </a>
+
+                <a href="assistant.html">
+                    🤖 AI Assistant
+                </a>
+
+                <a href="profile.html">
+                    👤 Profile
+                </a>
+
+            </nav>
+
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </aside>
+
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+
+            <!-- Top Bar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Your learning journey starts here.
+                    </p>
+
+                </div>
+
+
+                <div class="user-info">
+
+                    <div
+                        class="avatar"
+                        id="userAvatar"
+                    >
+                        A
+                    </div>
+
+                    <span id="userName">
+                        Student
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Welcome Section -->
+
+            <section class="welcome-card">
+
+                <div>
+
+                    <h2 id="welcomeTitle">
+                        Welcome back!
+                    </h2>
+
+                    <p>
+                        Continue learning and improve your skills every day.
+                    </p>
+
+                </div>
+
+
+                <div class="welcome-icon">
+                    🎓
+                </div>
+
+            </section>
+
+
+
+            <!-- Stats -->
+
+            <section class="stats-grid">
+
+
+                <!-- Courses -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📚
+                    </div>
+
+                    <h3 id="courseCount">
+                        0
+                    </h3>
+
+                    <p>
+                        Courses Completed
+                    </p>
+
+                </div>
+
+
+
+                <!-- Notes -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📝
+                    </div>
+
+                    <h3 id="noteCount">
+                        0
+                    </h3>
+
+                    <p>
+                        Notes Created
+                    </p>
+
+                </div>
+
+
+
+                <!-- Quiz -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🧠
+                    </div>
+
+                    <h3 id="quizCount">
+                        0
+                    </h3>
+
+                    <p>
+                        Quizzes Completed
+                    </p>
+
+                </div>
+
+
+
+                <!-- Overall Progress -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📈
+                    </div>
+
+                    <h3 id="overallProgress">
+                        0%
+                    </h3>
+
+                    <p>
+                        Overall Progress
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Quick Actions -->
+
+            <section class="section">
+
+                <h2>
+                    Quick Access
+                </h2>
+
+
+                <div class="quick-grid">
+
+
+                    <!-- Courses -->
+
+                    <div class="quick-card">
+
+                        <span>
+                            📚
+                        </span>
+
+                        <h3>
+                            Browse Courses
+                        </h3>
+
+                        <p>
+                            Explore available courses.
+                        </p>
+
+                        <button
+                            onclick="window.location.href='courses.html'"
+                        >
+                            Explore
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- Notes -->
+
+                    <div class="quick-card">
+
+                        <span>
+                            📝
+                        </span>
+
+                        <h3>
+                            My Notes
+                        </h3>
+
+                        <p>
+                            Create and manage your notes.
+                        </p>
+
+                        <button
+                            onclick="window.location.href='notes.html'"
+                        >
+                            Open Notes
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- Quiz -->
+
+                    <div class="quick-card">
+
+                        <span>
+                            🧠
+                        </span>
+
+                        <h3>
+                            Take a Quiz
+                        </h3>
+
+                        <p>
+                            Test your knowledge.
+                        </p>
+
+                        <button
+                            onclick="window.location.href='quiz.html'"
+                        >
+                            Start Quiz
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- AI Assistant -->
+
+                    <div class="quick-card">
+
+                        <span>
+                            🤖
+                        </span>
+
+                        <h3>
+                            AI Study Assistant
+                        </h3>
+
+                        <p>
+                            Ask questions and get study help.
+                        </p>
+
+                        <button
+                            onclick="window.location.href='assistant.html'"
+                        >
+                            Ask AI
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- Recent Activity -->
+
+            <section class="section">
+
+                <h2>
+                    Recent Activity
+                </h2>
+
+
+                <div class="activity-card">
+
+                    <p id="activityMessage">
+                        No recent activity yet.
+                    </p>
+
+                    <span id="activityDetails">
+                        Start learning to see your activity here.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <script>
+
+
+        // =========================
+        // CHECK LOGIN
+        // =========================
+
+        const userData =
+            localStorage.getItem(
+                "studyhiveUser"
+            );
+
+
+        if (!userData) {
+
+            window.location.href =
+                "login.html";
+
+        } else {
+
+            const user =
+                JSON.parse(userData);
+
+
+            document.getElementById(
+                "userName"
+            ).innerText =
+                user.name;
+
+
+            document.getElementById(
+                "welcomeTitle"
+            ).innerText =
+                "Welcome back, " +
+                user.name +
+                "!";
+
+
+            document.getElementById(
+                "userAvatar"
+            ).innerText =
+                user.name
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+
+
+        // =========================
+        // COURSE DATA
+        // =========================
+
+        const courseNames = [
+
+            "Python Programming",
+
+            "Web Development",
+
+            "Database Management",
+
+            "Cyber Security Basics",
+
+            "AI Fundamentals",
+
+            "Data Science"
+
+        ];
+
+
+
+        // =========================
+        // COUNT COURSES
+        // =========================
+
+        let completedCourses = 0;
+
+
+        courseNames.forEach(
+            function(courseName) {
+
+                const storageKey =
+                    "studyhiveCourse_" +
+                    courseName;
+
+
+                const completedTopics =
+                    JSON.parse(
+                        localStorage.getItem(
+                            storageKey
+                        )
+                    ) || [];
+
+
+                if (
+                    completedTopics.length === 6
+                ) {
+
+                    completedCourses++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "courseCount"
+        ).innerText =
+            completedCourses;
+
+
+
+        // =========================
+        // COUNT NOTES
+        // =========================
+
+        const notes =
+            JSON.parse(
+                localStorage.getItem(
+                    "studyhiveNotes"
+                )
+            ) || [];
+
+
+        document.getElementById(
+            "noteCount"
+        ).innerText =
+            notes.length;
+
+
+
+        // =========================
+        // QUIZ DATA
+        // =========================
+
+        const quizScore =
+            localStorage.getItem(
+                "studyhiveQuizScore"
+            );
+
+
+        const quizTotal =
+            localStorage.getItem(
+                "studyhiveQuizTotal"
+            );
+
+
+        let quizPercentage = 0;
+
+
+        if (
+
+            quizScore !== null &&
+
+            quizTotal !== null &&
+
+            Number(quizTotal) > 0
+
+        ) {
+
+            quizPercentage =
+                Math.round(
+                    (
+                        Number(quizScore) /
+                        Number(quizTotal)
+                    ) * 100
+                );
+
+        }
+
+
+
+        // =========================
+        // QUIZ COMPLETED
+        // =========================
+
+        let quizCompleted = 0;
+
+
+        if (
+            quizScore !== null &&
+            quizTotal !== null
+        ) {
+
+            quizCompleted = 1;
+
+        }
+
+
+        document.getElementById(
+            "quizCount"
+        ).innerText =
+            quizCompleted;
+
+
+
+        // =========================
+        // COURSE PROGRESS
+        // =========================
+
+        const courseProgress =
+            Math.round(
+                (
+                    completedCourses /
+                    courseNames.length
+                ) * 100
+            );
+
+
+
+        // =========================
+        // NOTES PROGRESS
+        // =========================
+
+        let notesProgress = 0;
+
+
+        if (notes.length > 0) {
+
+            notesProgress =
+                Math.min(
+                    notes.length * 10,
+                    100
+                );
+
+        }
+
+
+
+        // =========================
+        // OVERALL PROGRESS
+        // =========================
+
+        const overallLearningProgress =
+            Math.round(
+                (
+                    courseProgress +
+                    quizPercentage +
+                    notesProgress
+                ) / 3
+            );
+
+
+        document.getElementById(
+            "overallProgress"
+        ).innerText =
+            overallLearningProgress +
+            "%";
+
+
+
+        // =========================
+        // RECENT ACTIVITY
+        // =========================
+
+        const activities = [];
+
+
+        if (completedCourses > 0) {
+
+            activities.push(
+                completedCourses +
+                " course" +
+                (
+                    completedCourses === 1
+                        ? ""
+                        : "s"
+                ) +
+                " completed"
+            );
+
+        }
+
+
+        if (quizCompleted > 0) {
+
+            activities.push(
+                "Latest quiz score: " +
+                quizScore +
+                "/" +
+                quizTotal
+            );
+
+        }
+
+
+        if (notes.length > 0) {
+
+            activities.push(
+                notes.length +
+                " note" +
+                (
+                    notes.length === 1
+                        ? ""
+                        : "s"
+                ) +
+                " created"
+            );
+
+        }
+
+
+
+        if (activities.length > 0) {
+
+            document.getElementById(
+                "activityMessage"
+            ).innerText =
+                "Your recent learning activity";
+
+
+            document.getElementById(
+                "activityDetails"
+            ).innerText =
+                activities.join(" • ");
+
+        }
+
+
+
+        // =========================
+        // LOGOUT
+        // =========================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "studyhiveUser"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

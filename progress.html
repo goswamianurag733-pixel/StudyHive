@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Progress - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <div class="dashboard-page">
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                StudyHive
+            </div>
+
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="courses.html">
+                    📚 Courses
+                </a>
+
+                <a href="notes.html">
+                    📝 Notes
+                </a>
+
+                <a href="quiz.html">
+                    🧠 Quizzes
+                </a>
+
+                <a
+                    href="progress.html"
+                    class="active"
+                >
+                    📊 Progress
+                </a>
+
+                <a href="profile.html">
+                    👤 Profile
+                </a>
+
+            </nav>
+
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </aside>
+
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        My Progress
+                    </h1>
+
+                    <p>
+                        Track your learning progress.
+                    </p>
+
+                </div>
+
+
+                <div class="user-info">
+
+                    <div
+                        class="avatar"
+                        id="userAvatar"
+                    >
+                        A
+                    </div>
+
+                    <span id="userName">
+                        Student
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Progress Overview -->
+
+            <section class="progress-grid">
+
+
+                <!-- Courses -->
+
+                <div class="progress-card">
+
+                    <div class="progress-icon">
+                        📚
+                    </div>
+
+                    <h2 id="courseCount">
+                        0
+                    </h2>
+
+                    <p>
+                        Courses Completed
+                    </p>
+
+                </div>
+
+
+
+                <!-- Quiz -->
+
+                <div class="progress-card">
+
+                    <div class="progress-icon">
+                        🧠
+                    </div>
+
+                    <h2 id="quizScore">
+                        0 / 0
+                    </h2>
+
+                    <p>
+                        Quiz Score
+                    </p>
+
+                </div>
+
+
+
+                <!-- Notes -->
+
+                <div class="progress-card">
+
+                    <div class="progress-icon">
+                        📝
+                    </div>
+
+                    <h2 id="noteCount">
+                        0
+                    </h2>
+
+                    <p>
+                        Notes Created
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- Overall Progress -->
+
+            <section class="progress-section">
+
+                <h2>
+                    Overall Learning Progress
+                </h2>
+
+
+                <div class="progress-box">
+
+                    <div class="progress-title">
+
+                        <span>
+                            Learning Progress
+                        </span>
+
+                        <strong id="progressPercentage">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="large-progress-bar">
+
+                        <div
+                            id="overallProgress"
+                            class="large-progress-fill"
+                        ></div>
+
+                    </div>
+
+
+                    <p id="progressMessage">
+                        Start learning by exploring your first course.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- Learning Activity -->
+
+            <section class="progress-section">
+
+                <h2>
+                    Learning Activity
+                </h2>
+
+
+                <div class="activity-card">
+
+
+                    <!-- Courses Activity -->
+
+                    <div class="activity-item">
+
+                        <span>
+                            📚
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Courses
+                            </strong>
+
+                            <p id="courseActivity">
+                                Start a course to begin your learning journey.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Quiz Activity -->
+
+                    <div class="activity-item">
+
+                        <span>
+                            🧠
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Quizzes
+                            </strong>
+
+                            <p id="quizActivity">
+                                Complete quizzes to test your knowledge.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Notes Activity -->
+
+                    <div class="activity-item">
+
+                        <span>
+                            📝
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Notes
+                            </strong>
+
+                            <p id="notesActivity">
+                                Create notes to organize your study material.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <script>
+
+
+        // =========================
+        // CHECK LOGIN
+        // =========================
+
+        const userData =
+            localStorage.getItem("studyhiveUser");
+
+
+        if (!userData) {
+
+            window.location.href =
+                "login.html";
+
+        } else {
+
+            const user =
+                JSON.parse(userData);
+
+
+            document.getElementById(
+                "userName"
+            ).innerText =
+                user.name;
+
+
+            document.getElementById(
+                "userAvatar"
+            ).innerText =
+                user.name
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+
+
+        // =========================
+        // COURSE DATA
+        // =========================
+
+        const courseNames = [
+
+            "Python Programming",
+
+            "Web Development",
+
+            "Database Management",
+
+            "Cyber Security Basics",
+
+            "AI Fundamentals",
+
+            "Data Science"
+
+        ];
+
+
+
+        // =========================
+        // COUNT COMPLETED COURSES
+        // =========================
+
+        let completedCourses = 0;
+
+
+        courseNames.forEach(
+            function(courseName) {
+
+                const storageKey =
+                    "studyhiveCourse_" +
+                    courseName;
+
+
+                const completedTopics =
+                    JSON.parse(
+                        localStorage.getItem(
+                            storageKey
+                        )
+                    ) || [];
+
+
+                if (
+                    completedTopics.length === 6
+                ) {
+
+                    completedCourses++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "courseCount"
+        ).innerText =
+            completedCourses;
+
+
+
+        // =========================
+        // COURSE ACTIVITY
+        // =========================
+
+        if (completedCourses > 0) {
+
+            document.getElementById(
+                "courseActivity"
+            ).innerText =
+                completedCourses +
+                " course" +
+                (
+                    completedCourses === 1
+                        ? ""
+                        : "s"
+                ) +
+                " completed.";
+
+        }
+
+
+
+        // =========================
+        // COUNT NOTES
+        // =========================
+
+        const notes =
+            JSON.parse(
+                localStorage.getItem(
+                    "studyhiveNotes"
+                )
+            ) || [];
+
+
+        document.getElementById(
+            "noteCount"
+        ).innerText =
+            notes.length;
+
+
+        if (notes.length > 0) {
+
+            document.getElementById(
+                "notesActivity"
+            ).innerText =
+                "You have created " +
+                notes.length +
+                " study note" +
+                (
+                    notes.length === 1
+                        ? ""
+                        : "s"
+                ) +
+                ".";
+
+        }
+
+
+
+        // =========================
+        // GET QUIZ RESULT
+        // =========================
+
+        const savedQuizScore =
+            localStorage.getItem(
+                "studyhiveQuizScore"
+            );
+
+
+        const savedQuizTotal =
+            localStorage.getItem(
+                "studyhiveQuizTotal"
+            );
+
+
+        let quizProgress = 0;
+
+
+        if (
+
+            savedQuizScore !== null &&
+
+            savedQuizTotal !== null &&
+
+            Number(savedQuizTotal) > 0
+
+        ) {
+
+
+            const score =
+                Number(savedQuizScore);
+
+
+            const total =
+                Number(savedQuizTotal);
+
+
+
+            // Show Quiz Score
+
+            document.getElementById(
+                "quizScore"
+            ).innerText =
+                score +
+                " / " +
+                total;
+
+
+
+            // Calculate Quiz Percentage
+
+            quizProgress =
+                Math.round(
+                    (score / total) * 100
+                );
+
+
+
+            // Quiz Activity
+
+            document.getElementById(
+                "quizActivity"
+            ).innerText =
+                "Latest quiz score: " +
+                score +
+                " out of " +
+                total +
+                ".";
+
+        }
+
+
+
+        // =========================
+        // CALCULATE COURSE PROGRESS
+        // =========================
+
+        const courseProgress =
+            Math.round(
+                (
+                    completedCourses /
+                    courseNames.length
+                ) * 100
+            );
+
+
+
+        // =========================
+        // CALCULATE NOTES PROGRESS
+        // =========================
+
+        let notesProgress = 0;
+
+
+        if (notes.length > 0) {
+
+            notesProgress =
+                Math.min(
+                    notes.length * 10,
+                    100
+                );
+
+        }
+
+
+
+        // =========================
+        // OVERALL LEARNING PROGRESS
+        // =========================
+
+        const overallLearningProgress =
+            Math.round(
+                (
+                    courseProgress +
+                    quizProgress +
+                    notesProgress
+                ) / 3
+            );
+
+
+        document.getElementById(
+            "progressPercentage"
+        ).innerText =
+            overallLearningProgress +
+            "%";
+
+
+        document.getElementById(
+            "overallProgress"
+        ).style.width =
+            overallLearningProgress +
+            "%";
+
+
+
+        // =========================
+        // PROGRESS MESSAGE
+        // =========================
+
+        if (
+            overallLearningProgress === 0
+        ) {
+
+            document.getElementById(
+                "progressMessage"
+            ).innerText =
+                "Start learning by exploring your first course.";
+
+        }
+
+        else if (
+            overallLearningProgress < 40
+        ) {
+
+            document.getElementById(
+                "progressMessage"
+            ).innerText =
+                "Good start! Keep learning and completing courses.";
+
+        }
+
+        else if (
+            overallLearningProgress < 70
+        ) {
+
+            document.getElementById(
+                "progressMessage"
+            ).innerText =
+                "Nice progress! Keep practicing and improving.";
+
+        }
+
+        else if (
+            overallLearningProgress < 100
+        ) {
+
+            document.getElementById(
+                "progressMessage"
+            ).innerText =
+                "Great work! You are getting closer to your learning goals.";
+
+        }
+
+        else {
+
+            document.getElementById(
+                "progressMessage"
+            ).innerText =
+                "Excellent! You have completed your learning activities.";
+
+        }
+
+
+
+        // =========================
+        // LOGOUT
+        // =========================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "studyhiveUser"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

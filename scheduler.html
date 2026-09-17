@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Scheduler - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-page">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            StudyHive
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="courses.html">
+                📚 Courses
+            </a>
+
+            <a href="notes.html">
+                📝 Notes
+            </a>
+
+            <a href="quiz.html">
+                🧠 Quizzes
+            </a>
+
+            <a href="progress.html">
+                📊 Progress
+            </a>
+
+            <a href="groups.html">
+                👥 Study Groups
+            </a>
+
+            <a href="scheduler.html" class="active">
+                📅 Smart Scheduler
+            </a>
+
+            <a href="profile.html">
+                👤 Profile
+            </a>
+
+        </nav>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- Main Content -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Smart Scheduler
+                </h1>
+
+                <p>
+                    Plan your study sessions and stay organized.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- Add Task -->
+
+        <section class="scheduler-form">
+
+            <h2>
+                Add Study Task
+            </h2>
+
+            <div class="scheduler-form-grid">
+
+                <div>
+
+                    <label for="taskTitle">
+                        Task
+                    </label>
+
+                    <input
+                        type="text"
+                        id="taskTitle"
+                        placeholder="Example: Complete Python loops"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label for="taskSubject">
+                        Subject
+                    </label>
+
+                    <select id="taskSubject">
+
+                        <option value="">
+                            Select Subject
+                        </option>
+
+                        <option value="Python">
+                            Python
+                        </option>
+
+                        <option value="Web Development">
+                            Web Development
+                        </option>
+
+                        <option value="DBMS">
+                            DBMS
+                        </option>
+
+                        <option value="Cyber Security">
+                            Cyber Security
+                        </option>
+
+                        <option value="AI">
+                            AI
+                        </option>
+
+                        <option value="Data Science">
+                            Data Science
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label for="taskDate">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="taskDate"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label for="taskTime">
+                        Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="taskTime"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="add-task-btn"
+                onclick="addTask()"
+            >
+                + Add Study Task
+            </button>
+
+        </section>
+
+
+        <!-- Tasks -->
+
+        <section class="scheduler-section">
+
+            <div class="scheduler-title">
+
+                <div>
+
+                    <h2>
+                        My Study Schedule
+                    </h2>
+
+                    <p>
+                        Your upcoming and completed study tasks.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="tasks-list"
+                id="tasksList"
+            >
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+// =========================
+// LOGIN CHECK
+// =========================
+
+const userData =
+    localStorage.getItem("studyhiveUser");
+
+
+if (!userData) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// =========================
+// STORAGE KEY
+// =========================
+
+const schedulerKey =
+    "studyhiveSchedule";
+
+
+// =========================
+// LOAD TASKS
+// =========================
+
+function getTasks() {
+
+    return JSON.parse(
+        localStorage.getItem(
+            schedulerKey
+        )
+    ) || [];
+
+}
+
+
+// =========================
+// SAVE TASKS
+// =========================
+
+function saveTasks(tasks) {
+
+    localStorage.setItem(
+        schedulerKey,
+        JSON.stringify(tasks)
+    );
+
+}
+
+
+// =========================
+// ADD TASK
+// =========================
+
+function addTask() {
+
+    const title =
+        document.getElementById(
+            "taskTitle"
+        ).value.trim();
+
+
+    const subject =
+        document.getElementById(
+            "taskSubject"
+        ).value;
+
+
+    const date =
+        document.getElementById(
+            "taskDate"
+        ).value;
+
+
+    const time =
+        document.getElementById(
+            "taskTime"
+        ).value;
+
+
+    if (
+        !title ||
+        !subject ||
+        !date ||
+        !time
+    ) {
+
+        alert(
+            "Please fill in all fields."
+        );
+
+        return;
+
+    }
+
+
+    const tasks =
+        getTasks();
+
+
+    const newTask = {
+
+        id: Date.now(),
+
+        title: title,
+
+        subject: subject,
+
+        date: date,
+
+        time: time,
+
+        completed: false
+
+    };
+
+
+    tasks.push(newTask);
+
+
+    saveTasks(tasks);
+
+
+    document.getElementById(
+        "taskTitle"
+    ).value = "";
+
+
+    document.getElementById(
+        "taskSubject"
+    ).value = "";
+
+
+    document.getElementById(
+        "taskDate"
+    ).value = "";
+
+
+    document.getElementById(
+        "taskTime"
+    ).value = "";
+
+
+    displayTasks();
+
+}
+
+
+// =========================
+// DISPLAY TASKS
+// =========================
+
+function displayTasks() {
+
+    const tasks =
+        getTasks();
+
+
+    const container =
+        document.getElementById(
+            "tasksList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (tasks.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="no-tasks">
+
+                <h3>
+                    No study tasks yet
+                </h3>
+
+                <p>
+                    Add your first study task above.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    tasks.sort(
+        function(a, b) {
+
+            const first =
+                new Date(
+                    a.date + "T" + a.time
+                );
+
+            const second =
+                new Date(
+                    b.date + "T" + b.time
+                );
+
+            return first - second;
+
+        }
+    );
+
+
+    tasks.forEach(
+        function(task) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "task-card";
+
+
+            if (task.completed) {
+
+                card.classList.add(
+                    "task-completed"
+                );
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="task-main">
+
+                    <div class="task-check">
+
+                        <button
+                            onclick="toggleTask(${task.id})"
+                        >
+                            ${task.completed ? "✓" : "○"}
+                        </button>
+
+                    </div>
+
+
+                    <div class="task-details">
+
+                        <h3>
+                            ${escapeHTML(task.title)}
+                        </h3>
+
+                        <p>
+                            📚 ${escapeHTML(task.subject)}
+                        </p>
+
+                        <div class="task-date">
+
+                            📅 ${formatDate(task.date)}
+
+                            &nbsp;&nbsp;
+
+                            ⏰ ${task.time}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="delete-task-btn"
+                    onclick="deleteTask(${task.id})"
+                >
+                    Delete
+                </button>
+
+            `;
+
+
+            container.appendChild(card);
+
+        }
+    );
+
+}
+
+
+// =========================
+// COMPLETE TASK
+// =========================
+
+function toggleTask(id) {
+
+    const tasks =
+        getTasks();
+
+
+    const task =
+        tasks.find(
+            function(item) {
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if (!task) {
+
+        return;
+
+    }
+
+
+    task.completed =
+        !task.completed;
+
+
+    saveTasks(tasks);
+
+
+    displayTasks();
+
+}
+
+
+// =========================
+// DELETE TASK
+// =========================
+
+function deleteTask(id) {
+
+    const confirmDelete =
+        confirm(
+            "Delete this study task?"
+        );
+
+
+    if (!confirmDelete) {
+
+        return;
+
+    }
+
+
+    let tasks =
+        getTasks();
+
+
+    tasks =
+        tasks.filter(
+            function(task) {
+
+                return task.id !== id;
+
+            }
+        );
+
+
+    saveTasks(tasks);
+
+
+    displayTasks();
+
+}
+
+
+// =========================
+// FORMAT DATE
+// =========================
+
+function formatDate(dateString) {
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// =========================
+// HTML ESCAPE
+// =========================
+
+function escapeHTML(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+function logout() {
+
+    localStorage.removeItem(
+        "studyhiveUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// =========================
+// LOAD
+// =========================
+
+displayTasks();
+
+</script>
+
+</body>
+
+</html>

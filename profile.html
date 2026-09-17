@@ -1,0 +1,469 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="logo">StudyHive</div>
+
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="courses.html">📚 Courses</a>
+                <a href="notes.html">📝 Notes</a>
+                <a href="quiz.html">🧠 Quizzes</a>
+                <a href="progress.html">📊 Progress</a>
+                <a href="profile.html" class="active">👤 Profile</a>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <h1>My Profile</h1>
+                    <p>Manage your StudyHive account.</p>
+                </div>
+
+            </header>
+
+
+            <!-- Profile Card -->
+            <section class="profile-card">
+
+                <div class="profile-avatar" id="profileAvatar">
+                    A
+                </div>
+
+                <h2 id="profileName">
+                    Student
+                </h2>
+
+                <p id="profileEmail">
+                    student@example.com
+                </p>
+
+            </section>
+
+
+            <!-- Account Information -->
+            <section class="profile-section">
+
+                <h2>Account Information</h2>
+
+                <div class="profile-info">
+
+                    <div class="info-row">
+                        <span>Full Name</span>
+
+                        <strong id="infoName">
+                            Student
+                        </strong>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span>Email Address</span>
+
+                        <strong id="infoEmail">
+                            student@example.com
+                        </strong>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span>Account Status</span>
+
+                        <strong class="status">
+                            Active
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Edit Profile -->
+            <section class="profile-section">
+
+                <h2>Edit Profile</h2>
+
+                <div class="profile-edit-form">
+
+                    <label for="editName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editName"
+                        placeholder="Enter your name"
+                    >
+
+
+                    <label for="editEmail">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="editEmail"
+                        placeholder="Enter your email"
+                    >
+
+
+                    <button onclick="saveProfile()">
+                        Save Changes
+                    </button>
+
+                    <p id="profileMessage"></p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Change Password -->
+            <section class="profile-section">
+
+                <h2>Change Password</h2>
+
+                <div class="profile-edit-form">
+
+                    <label for="currentPassword">
+                        Current Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="currentPassword"
+                        placeholder="Enter current password"
+                    >
+
+
+                    <label for="newPassword">
+                        New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="newPassword"
+                        placeholder="Enter new password"
+                    >
+
+
+                    <label for="confirmPassword">
+                        Confirm New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm new password"
+                    >
+
+
+                    <button onclick="changePassword()">
+                        Change Password
+                    </button>
+
+                    <p id="passwordMessage"></p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Account Actions -->
+            <section class="profile-section">
+
+                <h2>Account Actions</h2>
+
+                <div class="profile-actions">
+
+                    <button onclick="logout()">
+                        Logout
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // =========================
+        // Check Login
+        // =========================
+
+        const userData =
+            localStorage.getItem("studyhiveUser");
+
+
+        if (!userData) {
+
+            window.location.href = "login.html";
+
+        } else {
+
+            const user = JSON.parse(userData);
+
+            loadProfile(user);
+        }
+
+
+        // =========================
+        // Load Profile
+        // =========================
+
+        function loadProfile(user) {
+
+            document.getElementById("profileName").innerText =
+                user.name;
+
+            document.getElementById("profileEmail").innerText =
+                user.email;
+
+            document.getElementById("infoName").innerText =
+                user.name;
+
+            document.getElementById("infoEmail").innerText =
+                user.email;
+
+            document.getElementById("profileAvatar").innerText =
+                user.name.charAt(0).toUpperCase();
+
+
+            document.getElementById("editName").value =
+                user.name;
+
+            document.getElementById("editEmail").value =
+                user.email;
+        }
+
+
+        // =========================
+        // Save Profile
+        // =========================
+
+        function saveProfile() {
+
+            const name =
+                document.getElementById("editName")
+                    .value.trim();
+
+            const email =
+                document.getElementById("editEmail")
+                    .value.trim();
+
+            const message =
+                document.getElementById("profileMessage");
+
+
+            if (!name || !email) {
+
+                message.innerText =
+                    "Please fill in all fields.";
+
+                return;
+            }
+
+
+            const oldUser = JSON.parse(
+                localStorage.getItem("studyhiveUser")
+            );
+
+
+            const user = {
+
+                id: oldUser.id,
+
+                name: name,
+
+                email: email
+            };
+
+
+            localStorage.setItem(
+                "studyhiveUser",
+                JSON.stringify(user)
+            );
+
+
+            loadProfile(user);
+
+
+            message.innerText =
+                "Profile updated successfully.";
+        }
+
+
+        // =========================
+        // Change Password
+        // =========================
+
+        async function changePassword() {
+
+            const currentPassword =
+                document.getElementById("currentPassword").value;
+
+            const newPassword =
+                document.getElementById("newPassword").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+            const message =
+                document.getElementById("passwordMessage");
+
+
+            if (
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword
+            ) {
+
+                message.innerText =
+                    "Please fill in all password fields.";
+
+                return;
+            }
+
+
+            if (newPassword !== confirmPassword) {
+
+                message.innerText =
+                    "New passwords do not match.";
+
+                return;
+            }
+
+
+            if (newPassword.length < 6) {
+
+                message.innerText =
+                    "New password must be at least 6 characters.";
+
+                return;
+            }
+
+
+            const user = JSON.parse(
+                localStorage.getItem("studyhiveUser")
+            );
+
+
+            try {
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/change-password",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            user_id: user.id,
+
+                            current_password:
+                                currentPassword,
+
+                            new_password:
+                                newPassword
+                        })
+                    }
+                );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    message.innerText =
+                        data.message ||
+                        "Unable to change password.";
+
+                    return;
+                }
+
+
+                message.innerText =
+                    "Password changed successfully.";
+
+
+                document.getElementById(
+                    "currentPassword"
+                ).value = "";
+
+
+                document.getElementById(
+                    "newPassword"
+                ).value = "";
+
+
+                document.getElementById(
+                    "confirmPassword"
+                ).value = "";
+
+
+            } catch (error) {
+
+                message.innerText =
+                    "Unable to connect to the backend.";
+
+                console.error(error);
+            }
+        }
+
+
+        // =========================
+        // Logout
+        // =========================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "studyhiveUser"
+            );
+
+            window.location.href =
+                "login.html";
+        }
+
+    </script>
+
+</body>
+
+</html>
+```

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Study Assistant - StudyHive</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-page">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            StudyHive
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="courses.html">
+                📚 Courses
+            </a>
+
+            <a href="notes.html">
+                📝 Notes
+            </a>
+
+            <a href="quiz.html">
+                🧠 Quizzes
+            </a>
+
+            <a href="progress.html">
+                📊 Progress
+            </a>
+
+            <a href="groups.html">
+                👥 Study Groups
+            </a>
+
+            <a href="scheduler.html">
+                📅 Smart Scheduler
+            </a>
+
+            <a href="assistant.html" class="active">
+                🤖 AI Assistant
+            </a>
+
+            <a href="profile.html">
+                👤 Profile
+            </a>
+
+        </nav>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    AI Study Assistant
+                </h1>
+
+                <p>
+                    Ask questions and get help with your studies.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- AI HEADER -->
+
+        <section class="assistant-header">
+
+            <div class="assistant-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h2>
+                    How can I help you?
+                </h2>
+
+                <p>
+                    Ask me about programming, databases, web development,
+                    cyber security and more.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK QUESTIONS -->
+
+        <section class="quick-prompts">
+
+            <h2>
+                Quick Questions
+            </h2>
+
+            <div class="prompt-grid">
+
+                <button
+                    onclick="usePrompt('Explain Python loops in simple words')"
+                >
+                    🐍 Explain Python loops
+                </button>
+
+                <button
+                    onclick="usePrompt('What is DBMS?')"
+                >
+                    🗄️ What is DBMS?
+                </button>
+
+                <button
+                    onclick="usePrompt('Explain HTML and CSS')"
+                >
+                    🌐 Explain HTML & CSS
+                </button>
+
+                <button
+                    onclick="usePrompt('What is cyber security?')"
+                >
+                    🔐 What is Cyber Security?
+                </button>
+
+                <button
+                    onclick="usePrompt('What is Artificial Intelligence?')"
+                >
+                    🤖 What is AI?
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHAT -->
+
+        <section class="assistant-chat">
+
+            <div
+                class="chat-messages"
+                id="chatMessages"
+            >
+
+                <div class="chat-message ai-message">
+
+                    <div class="message-avatar">
+                        🤖
+                    </div>
+
+                    <div class="message-content">
+
+                        <strong>
+                            AI Assistant
+                        </strong>
+
+                        <p>
+                            Hello! I'm your StudyHive AI Study Assistant.
+                            Ask me any study-related question.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INPUT -->
+
+            <div class="chat-input-area">
+
+                <input
+                    type="text"
+                    id="questionInput"
+                    placeholder="Ask a study question..."
+                    onkeydown="handleEnter(event)"
+                >
+
+                <button
+                    onclick="askQuestion()"
+                    id="askButton"
+                >
+                    Ask
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+// =========================
+// LOGIN CHECK
+// =========================
+
+const userData =
+    localStorage.getItem("studyhiveUser");
+
+
+if (!userData) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// =========================
+// QUICK PROMPT
+// =========================
+
+function usePrompt(question) {
+
+    document.getElementById(
+        "questionInput"
+    ).value = question;
+
+
+    askQuestion();
+
+}
+
+
+// =========================
+// ENTER KEY
+// =========================
+
+function handleEnter(event) {
+
+    if (event.key === "Enter") {
+
+        askQuestion();
+
+    }
+
+}
+
+
+// =========================
+// ASK QUESTION
+// =========================
+
+async function askQuestion() {
+
+    const input =
+        document.getElementById(
+            "questionInput"
+        );
+
+
+    const button =
+        document.getElementById(
+            "askButton"
+        );
+
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        return;
+
+    }
+
+
+    addMessage(
+        question,
+        "user"
+    );
+
+
+    input.value = "";
+
+    button.disabled = true;
+
+    button.innerText = "Thinking...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/api/assistant",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        question: question
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            addMessage(
+                data.message ||
+                "Something went wrong.",
+                "ai"
+            );
+
+        }
+
+        else {
+
+            addMessage(
+                data.answer,
+                "ai"
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        addMessage(
+            "Unable to connect to the StudyHive backend.",
+            "ai"
+        );
+
+        console.error(error);
+
+    }
+
+
+    button.disabled = false;
+
+    button.innerText = "Ask";
+
+}
+
+
+// =========================
+// ADD MESSAGE
+// =========================
+
+function addMessage(
+    text,
+    type
+) {
+
+    const container =
+        document.getElementById(
+            "chatMessages"
+        );
+
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    if (type === "user") {
+
+        message.className =
+            "chat-message user-message";
+
+
+        message.innerHTML = `
+
+            <div class="message-content">
+
+                <strong>
+                    You
+                </strong>
+
+                <p>
+                    ${escapeHTML(text)}
+                </p>
+
+            </div>
+
+            <div class="message-avatar">
+                👤
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        message.className =
+            "chat-message ai-message";
+
+
+        message.innerHTML = `
+
+            <div class="message-avatar">
+                🤖
+            </div>
+
+            <div class="message-content">
+
+                <strong>
+                    AI Assistant
+                </strong>
+
+                <p>
+                    ${escapeHTML(text)}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    container.appendChild(message);
+
+
+    container.scrollTop =
+        container.scrollHeight;
+
+}
+
+
+// =========================
+// ESCAPE HTML
+// =========================
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+function logout() {
+
+    localStorage.removeItem(
+        "studyhiveUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>
