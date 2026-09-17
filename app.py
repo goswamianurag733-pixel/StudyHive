@@ -3,15 +3,23 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+# =========================================================
+# APP CONFIGURATION
+# =========================================================
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+app = Flask(
+    __name__,
+    static_folder=BASE_DIR,
+    static_url_path=""
+)
 
 CORS(app)
 
-# =========================
+# =========================================================
 # DATABASE CONFIGURATION
-# =========================
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+# =========================================================
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "sqlite:///" + os.path.join(BASE_DIR, "studyhive.db")
@@ -21,10 +29,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-
-# =========================
-# USER TABLE
-# =========================
+# =========================================================
+# USER MODEL
+# =========================================================
 
 class User(db.Model):
 
@@ -50,22 +57,44 @@ class User(db.Model):
     )
 
 
-# =========================
-# HOME
-# =========================
+# =========================================================
+# HOME PAGE
+# =========================================================
 
 @app.route("/")
 def home():
 
+    return send_from_directory(
+        BASE_DIR,
+        "index.html"
+    )
+
+
+# =========================================================
+# SERVE HTML / CSS / JS FILES
+# =========================================================
+
+@app.route("/<path:filename>")
+def serve_files(filename):
+
+    file_path = os.path.join(BASE_DIR, filename)
+
+    if os.path.isfile(file_path):
+
+        return send_from_directory(
+            BASE_DIR,
+            filename
+        )
+
     return jsonify({
-        "message": "StudyHive Backend is running!",
-        "status": "success"
-    })
+        "message": "Page not found",
+        "status": "error"
+    }), 404
 
 
-# =========================
+# =========================================================
 # HEALTH CHECK
-# =========================
+# =========================================================
 
 @app.route("/api/health")
 def health():
@@ -76,14 +105,14 @@ def health():
     })
 
 
-# =========================
+# =========================================================
 # REGISTER
-# =========================
+# =========================================================
 
 @app.route("/api/register", methods=["POST"])
 def register():
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     name = data.get("name")
     email = data.get("email")
@@ -112,7 +141,6 @@ def register():
     )
 
     db.session.add(new_user)
-
     db.session.commit()
 
     return jsonify({
@@ -121,14 +149,14 @@ def register():
     }), 201
 
 
-# =========================
+# =========================================================
 # LOGIN
-# =========================
+# =========================================================
 
 @app.route("/api/login", methods=["POST"])
 def login():
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     email = data.get("email")
     password = data.get("password")
@@ -174,14 +202,14 @@ def login():
     }), 200
 
 
-# =========================
+# =========================================================
 # CHANGE PASSWORD
-# =========================
+# =========================================================
 
 @app.route("/api/change-password", methods=["POST"])
 def change_password():
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     user_id = data.get("user_id")
 
@@ -203,7 +231,10 @@ def change_password():
             "message": "All fields are required"
         }), 400
 
-    user = User.query.get(user_id)
+    user = db.session.get(
+        User,
+        user_id
+    )
 
     if not user:
 
@@ -245,7 +276,7 @@ def change_password():
 @app.route("/api/assistant", methods=["POST"])
 def assistant():
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     question = data.get(
         "question",
@@ -260,10 +291,9 @@ def assistant():
 
     q = question.lower()
 
-
-    # =========================
+    # =====================================================
     # PYTHON
-    # =========================
+    # =====================================================
 
     if "python" in q or "loop" in q:
 
@@ -275,10 +305,9 @@ def assistant():
             "a condition remains true."
         )
 
-
-    # =========================
+    # =====================================================
     # C++
-    # =========================
+    # =====================================================
 
     elif "c++" in q or "cpp" in q:
 
@@ -290,10 +319,9 @@ def assistant():
             "and performance-oriented applications."
         )
 
-
-    # =========================
+    # =====================================================
     # JAVA
-    # =========================
+    # =====================================================
 
     elif "java" in q:
 
@@ -305,10 +333,9 @@ def assistant():
             "encapsulation."
         )
 
-
-    # =========================
+    # =====================================================
     # DSA
-    # =========================
+    # =====================================================
 
     elif (
         "data structure" in q
@@ -324,12 +351,14 @@ def assistant():
             "trees, graphs and hash tables."
         )
 
-
-    # =========================
+    # =====================================================
     # DBMS
-    # =========================
+    # =====================================================
 
-    elif "dbms" in q or "database" in q:
+    elif (
+        "dbms" in q
+        or "database" in q
+    ):
 
         answer = (
             "DBMS stands for Database Management System. "
@@ -339,10 +368,9 @@ def assistant():
             "and database design."
         )
 
-
-    # =========================
+    # =====================================================
     # HTML / CSS
-    # =========================
+    # =====================================================
 
     elif (
         "html" in q
@@ -357,10 +385,9 @@ def assistant():
             "and dynamic behavior."
         )
 
-
-    # =========================
+    # =====================================================
     # JAVASCRIPT
-    # =========================
+    # =====================================================
 
     elif (
         "javascript" in q
@@ -374,10 +401,9 @@ def assistant():
             "communicate with backend APIs."
         )
 
-
-    # =========================
+    # =====================================================
     # CYBER SECURITY
-    # =========================
+    # =====================================================
 
     elif (
         "cyber security" in q
@@ -392,10 +418,9 @@ def assistant():
             "application security and data protection."
         )
 
-
-    # =========================
+    # =====================================================
     # ARTIFICIAL INTELLIGENCE
-    # =========================
+    # =====================================================
 
     elif (
         "artificial intelligence" in q
@@ -411,10 +436,9 @@ def assistant():
             "understanding."
         )
 
-
-    # =========================
+    # =====================================================
     # COMPUTER NETWORKS
-    # =========================
+    # =====================================================
 
     elif (
         "computer network" in q
@@ -431,10 +455,9 @@ def assistant():
             "DNS, HTTP and network security."
         )
 
-
-    # =========================
+    # =====================================================
     # OPERATING SYSTEM
-    # =========================
+    # =====================================================
 
     elif (
         "operating system" in q
@@ -451,10 +474,9 @@ def assistant():
             "and deadlocks."
         )
 
-
-    # =========================
+    # =====================================================
     # SOFTWARE ENGINEERING
-    # =========================
+    # =====================================================
 
     elif "software engineering" in q:
 
@@ -466,10 +488,9 @@ def assistant():
             "and maintenance."
         )
 
-
-    # =========================
+    # =====================================================
     # COMPILER DESIGN
-    # =========================
+    # =====================================================
 
     elif (
         "compiler design" in q
@@ -485,10 +506,9 @@ def assistant():
             "code optimization and code generation."
         )
 
-
-    # =========================
+    # =====================================================
     # GENERAL RESPONSE
-    # =========================
+    # =====================================================
 
     else:
 
@@ -501,7 +521,6 @@ def assistant():
             "one of these subjects."
         )
 
-
     return jsonify({
 
         "status": "success",
@@ -511,18 +530,23 @@ def assistant():
     }), 200
 
 
-# =========================
+# =========================================================
+# DATABASE INITIALIZATION
+# =========================================================
+
+with app.app_context():
+
+    db.create_all()
+
+
+# =========================================================
 # START SERVER
-# =========================
+# =========================================================
 
 if __name__ == "__main__":
 
-    with app.app_context():
-
-        db.create_all()
-
     app.run(
         debug=False,
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=8000
     )
