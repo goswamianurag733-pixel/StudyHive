@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Study Groups - StudyHive</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+    .groups-page {
+        padding: 30px;
+    }
+
+    .groups-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .groups-header h1 {
+        margin: 0 0 6px;
+    }
+
+    .groups-header p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .create-group-btn {
+        border: none;
+        background: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .create-group-btn:hover {
+        opacity: 0.9;
+    }
+
+    .groups-search {
+        margin-bottom: 25px;
+    }
+
+    .groups-search input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .groups-search input:focus {
+        border-color: #4f46e5;
+    }
+
+    .groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .group-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .group-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .group-card h3 {
+        margin: 0 0 10px;
+    }
+
+    .group-subject {
+        display: inline-block;
+        background: #eef2ff;
+        color: #4f46e5;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .group-description {
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .group-info {
+        display: flex;
+        justify-content: space-between;
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .join-btn {
+        width: 100%;
+        border: none;
+        background: #4f46e5;
+        color: white;
+        padding: 11px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .join-btn:hover {
+        opacity: 0.9;
+    }
+
+    .empty-groups {
+        text-align: center;
+        padding: 50px 20px;
+        color: #64748b;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 1000;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+    }
+
+    .close-modal {
+        border: none;
+        background: transparent;
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .submit-group-btn {
+        width: 100%;
+        border: none;
+        background: #4f46e5;
+        color: white;
+        padding: 13px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    #groupMessage {
+        margin-top: 12px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+
+        .groups-page {
+            padding: 20px 15px;
+        }
+
+        .groups-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .create-group-btn {
+            width: 100%;
+        }
+
+        .groups-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="groups-page">
+
+    <div class="groups-header">
+
+        <div>
+            <h1>Study Groups</h1>
+
+            <p>
+                Find students, create groups and learn together.
+            </p>
+        </div>
+
+        <button
+            class="create-group-btn"
+            id="openCreateGroup">
+            + Create Group
+        </button>
+
+    </div>
+
+
+    <div class="groups-search">
+
+        <input
+            type="text"
+            id="searchGroups"
+            placeholder="Search study groups..."
+        >
+
+    </div>
+
+
+    <div
+        class="groups-grid"
+        id="groupsContainer">
+
+        <div class="empty-groups">
+            <h3>Loading groups...</h3>
+            <p>Please wait.</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CREATE GROUP MODAL -->
+
+<div
+    class="modal"
+    id="createGroupModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Create Study Group</h2>
+
+            <button
+                class="close-modal"
+                id="closeCreateGroup">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="createGroupForm">
+
+            <div class="form-group">
+
+                <label for="groupName">
+                    Group Name
+                </label>
+
+                <input
+                    type="text"
+                    id="groupName"
+                    placeholder="Example: DSA Beginners"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="groupSubject">
+                    Subject
+                </label>
+
+                <select
+                    id="groupSubject"
+                    required>
+
+                    <option value="">
+                        Select subject
+                    </option>
+
+                    <option value="DSA">
+                        DSA
+                    </option>
+
+                    <option value="Python">
+                        Python
+                    </option>
+
+                    <option value="Web Development">
+                        Web Development
+                    </option>
+
+                    <option value="DBMS">
+                        DBMS
+                    </option>
+
+                    <option value="Cyber Security">
+                        Cyber Security
+                    </option>
+
+                    <option value="AI">
+                        Artificial Intelligence
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="groupDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="groupDescription"
+                    placeholder="Describe what students will learn in this group..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit-group-btn">
+
+                Create Group
+
+            </button>
+
+
+            <p id="groupMessage"></p>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const modal =
+        document.getElementById("createGroupModal");
+
+    const openButton =
+        document.getElementById("openCreateGroup");
+
+    const closeButton =
+        document.getElementById("closeCreateGroup");
+
+
+    openButton.addEventListener("click", function() {
+
+        modal.classList.add("active");
+
+    });
+
+
+    closeButton.addEventListener("click", function() {
+
+        modal.classList.remove("active");
+
+    });
+
+
+    modal.addEventListener("click", function(event) {
+
+        if (event.target === modal) {
+
+            modal.classList.remove("active");
+
+        }
+
+    });
+
+
+    document
+        .getElementById("searchGroups")
+        .addEventListener("input", function() {
+
+            const search =
+                this.value.toLowerCase();
+
+            const cards =
+                document.querySelectorAll(".group-card");
+
+
+            cards.forEach(function(card) {
+
+                const text =
+                    card.innerText.toLowerCase();
+
+                card.style.display =
+                    text.includes(search)
+                        ? ""
+                        : "none";
+
+            });
+
+        });
+
+
+    document
+        .getElementById("createGroupForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const message =
+                document.getElementById("groupMessage");
+
+            message.innerText =
+                "Study Groups backend will be connected in the next step.";
+
+            message.style.color =
+                "#4f46e5";
+
+        });
+
+
+</script>
+```
+
+</body>
+
+</html>
